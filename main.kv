@@ -1,0 +1,95 @@
+#:kivy 2.3.0
+
+<LoginScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        Label:
+            text: "ORO EXAM SYSTEM LOGIN"
+
+        TextInput:
+            hint_text: "Username"
+
+        TextInput:
+            hint_text: "Password"
+            password: True
+
+        Button:
+            text: "Login"
+            on_release:
+                app.root.current = "dashboard"
+
+
+<DashboardScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        Label:
+            text: "DASHBOARD"
+
+        Button:
+            text: "Admin"
+            on_release: app.root.current = "admin"
+
+        Button:
+            text: "Teacher"
+            on_release: app.root.current = "teacher"
+
+        Button:
+            text: "Student"
+            on_release: app.root.current = "student"
+
+
+<AdminScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "ADMIN PANEL"
+
+        Button:
+            text: "Back"
+            on_release: app.root.current = "dashboard"
+
+
+<TeacherScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "TEACHER PANEL"
+
+        Button:
+            text: "Start Exam"
+            on_release: app.root.current = "exam"
+
+        Button:
+            text: "Back"
+            on_release: app.root.current = "dashboard"
+
+
+<StudentScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "STUDENT PANEL"
+
+        Button:
+            text: "Take Exam"
+            on_release: app.root.current = "exam"
+
+        Button:
+            text: "Back"
+            on_release: app.root.current = "dashboard"
+
+
+<ExamScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        Label:
+            text: "EXAM SCREEN"
+
+        Button:
+            text: "Submit"
+
+        Button:
+            text: "Back"
+            on_release: app.root.current = "dashboard"
