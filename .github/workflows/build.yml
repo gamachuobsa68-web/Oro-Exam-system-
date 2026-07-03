@@ -8,29 +8,22 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip build-essential
+          sudo apt install -y git zip unzip openjdk-17-jdk
 
       - name: Install Buildozer
         run: |
-          pip install --upgrade pip
           pip install cython==0.29.36 buildozer
-
-      - name: HARD RESET
-        run: |
-          rm -rf ~/.buildozer
-          rm -rf .buildozer
-          rm -rf bin
-          unset ANDROID_HOME
-          unset ANDROID_SDK_ROOT
 
       - name: Build APK
         run: |
@@ -39,5 +32,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: apk
+          name: oro-exam-apk
           path: bin/*.apk
