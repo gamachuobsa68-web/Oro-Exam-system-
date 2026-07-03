@@ -4,11 +4,11 @@ package.name = oroexamsystem
 package.domain = org.oro
 
 source.dir = .
-source.include_exts = py,png,jpg,kv
+source.include_exts = py,kv,png,jpg
 
 version = 1.0
 
-requirements = python3,kivy
+requirements = python3,kivy,reportlab
 
 orientation = portrait
 
