@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install system deps
+      - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip build-essential
@@ -24,7 +24,7 @@ jobs:
           pip install --upgrade pip
           pip install cython==0.29.36 buildozer
 
-      - name: HARD CLEAN (IMPORTANT)
+      - name: HARD RESET
         run: |
           rm -rf ~/.buildozer
           rm -rf .buildozer
@@ -32,7 +32,7 @@ jobs:
           unset ANDROID_HOME
           unset ANDROID_SDK_ROOT
 
-      - name: Build APK (NO SDK CONTROL)
+      - name: Build APK
         run: |
           buildozer android debug
 
