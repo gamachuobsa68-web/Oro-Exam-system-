@@ -14,20 +14,30 @@ jobs:
         with:
           python-version: "3.10"
 
-      - run: |
+      - name: Install system deps
+        run: |
           sudo apt update
           sudo apt install -y git zip unzip build-essential
 
-      - run: |
+      - name: Install Buildozer
+        run: |
+          pip install --upgrade pip
           pip install cython==0.29.36 buildozer
 
-      - run: |
-          rm -rf ~/.buildozer .buildozer bin
+      - name: HARD CLEAN (IMPORTANT)
+        run: |
+          rm -rf ~/.buildozer
+          rm -rf .buildozer
+          rm -rf bin
+          unset ANDROID_HOME
+          unset ANDROID_SDK_ROOT
 
-      - run: |
+      - name: Build APK (NO SDK CONTROL)
+        run: |
           buildozer android debug
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
           name: apk
           path: bin/*.apk
