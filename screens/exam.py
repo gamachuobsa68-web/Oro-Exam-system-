@@ -1,54 +1,82 @@
 from kivy.uix.screenmanager import Screen
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
 
 from data.questions import QUESTIONS
-from core.db import init_db, save_result
+from core.logic import grade_exam
+from utils.pdf import generate_result_pdf
 
 
 class ExamScreen(Screen):
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        init_db()
-
         self.index = 0
-        self.score = 0
+        self.answers = []
 
-        self.layout = BoxLayout(orientation="vertical", padding=20)
+        self.layout = BoxLayout(orientation="vertical", padding=20, spacing=10)
 
-        self.q = Label(text="")
-        self.layout.add_widget(self.q)
+        self.question_label = Label(text="", font_size=20)
 
-        self.buttons = []
+        self.btns = []
 
         for i in range(4):
-            b = Button()
-            b.bind(on_press=self.check)
-            self.buttons.append(b)
+            btn = Button(text="")
+            btn.bind(on_press=self.select_answer)
+            self.btns.append(btn)
+
+        self.next_btn = Button(text="Next")
+        self.next_btn.bind(on_press=self.next_question)
+
+        self.layout.add_widget(self.question_label)
+
+        for b in self.btns:
             self.layout.add_widget(b)
+
+        self.layout.add_widget(self.next_btn)
 
         self.add_widget(self.layout)
 
-        self.load()
+    # LOAD QUESTION
+    def on_enter(self):
+        self.load_question()
 
-    def load(self):
+    def load_question(self):
+
         q = QUESTIONS[self.index]
 
-        self.q.text = q["q"]
+        self.question_label.text = f"{self.index+1}. {q['question']}"
 
         for i, opt in enumerate(q["options"]):
-            self.buttons[i].text = opt
+            self.btns[i].text = opt
 
-    def check(self, instance):
-        if instance.text == QUESTIONS[self.index]["answer"]:
-            self.score += 1
+    # SELECT ANSWER
+    def select_answer(self, instance):
 
-        self.index += 1
+        self.answers.append(instance.text)
 
-        if self.index < len(QUESTIONS):
-            self.load()
+    # NEXT QUESTION
+    def next_question(self, instance):
+
+        if self.index < len(QUESTIONS) - 1:
+            self.index += 1
+            self.load_question()
         else:
-            save_result("student1", self.score, len(QUESTIONS))
-            self.manager.current = "leaderboard"
+            self.finish_exam()
+
+    # FINISH EXAM
+    def finish_exam(self):
+
+        score, total = grade_exam(self.answers)
+
+        pdf_file = generate_result_pdf(
+            "Student",
+            score,
+            total
+        )
+
+        print("PDF saved:", pdf_file)
+
+        self.manager.current = "dashboard"
