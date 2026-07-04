@@ -1,17 +1,23 @@
 USERS = {
     "student": {
-        "student001": "1234",
-        "student002": "1234"
+        "student1": "1234",
+        "student2": "1234"
     },
     "teacher": {
-        "teacher001": "1234"
+        "teacher1": "1234"
     },
     "admin": {
         "admin": "admin123"
     }
 }
 
-def login(role, username, password):
-    if role in USERS:
-        return USERS[role].get(username) == password
+
+def login_user(role, username, password):
+
+    if role not in USERS:
+        return False
+
+    if username in USERS[role]:
+        return USERS[role][username] == password
+
     return False
