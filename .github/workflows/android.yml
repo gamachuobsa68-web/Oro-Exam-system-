@@ -1,4 +1,4 @@
-name: Android APK (Stable Docker Build)
+name: Android APK (Fully Fixed Build)
 
 on:
   push:
@@ -16,10 +16,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Force non-interactive mode
+      - name: Install missing system tools
         run: |
-          export CI=1
-          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y wget curl zip unzip git
+
+      - name: Install Python dependencies
+        run: |
+          pip3 install --upgrade pip
+          pip3 install cython==0.29.36 buildozer
 
       - name: Build APK
         run: |
