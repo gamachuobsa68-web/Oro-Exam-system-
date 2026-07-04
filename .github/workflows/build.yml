@@ -1,22 +1,42 @@
-workflows:
-  android-build:
-    name: Android APK Build
-    max_build_duration: 60
+name: Build APK Stable
 
-    environment:
-      python: 3.10
+on:
+  push:
+    branches: [ main ]
 
-    scripts:
-      - name: Install dependencies
-        script: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk
-          pip install --upgrade pip
-          pip install cython==0.29.36 buildozer
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-      - name: Build APK
-        script: |
-          buildozer android debug
+    steps:
+    - uses: actions/checkout@v4
 
-    artifacts:
-      - bin/*.apk
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install system deps
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk \
+        build-essential libffi-dev libssl-dev
+
+    - name: Install Buildozer
+      run: |
+        pip install --upgrade pip
+        pip install cython==0.29.36 buildozer
+
+    - name: Force Buildozer clean setup
+      run: |
+        buildozer android clean || true
+
+    - name: Build APK
+      run: |
+        buildozer -v android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: apk
+        path: bin/*.apk
