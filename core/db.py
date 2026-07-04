@@ -1,34 +1,23 @@
 import sqlite3
 
-DB_NAME = "exam.db"
+DB = "exam.db"
 
 
-def init_db():
+def save_result(student, score, total):
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB)
     c = conn.cursor()
 
     c.execute("""
     CREATE TABLE IF NOT EXISTS results (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
         student TEXT,
         score INTEGER,
         total INTEGER
     )
     """)
 
-    conn.commit()
-    conn.close()
-
-
-def save_result(student, score, total):
-
-    conn = sqlite3.connect(DB_NAME)
-    c = conn.cursor()
-
     c.execute("""
-    INSERT INTO results (student, score, total)
-    VALUES (?, ?, ?)
+    INSERT INTO results VALUES (?, ?, ?)
     """, (student, score, total))
 
     conn.commit()
@@ -37,16 +26,13 @@ def save_result(student, score, total):
 
 def get_results():
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB)
     c = conn.cursor()
 
-    c.execute("""
-    SELECT student, score, total
-    FROM results
-    ORDER BY score DESC
-    """)
+    c.execute("SELECT student, score, total FROM results ORDER BY score DESC")
 
     data = c.fetchall()
 
     conn.close()
+
     return data
