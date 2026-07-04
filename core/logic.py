@@ -1,14 +1,10 @@
-from data.questions import QUESTIONS
-
-def grade_exam(answers):
+def grade_exam(answers, questions):
 
     score = 0
 
-    for i in range(len(QUESTIONS)):
+    for i, q in enumerate(questions):
 
-        if i < len(answers):
+        if i in answers and answers[i] == q["answer"]:
+            score += 1
 
-            if answers[i] == QUESTIONS[i]["answer"]:
-                score += 1
-
-    return score, len(QUESTIONS)
+    return score, len(questions)
