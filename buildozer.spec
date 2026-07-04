@@ -13,7 +13,7 @@ version = 1.0
 requirements = python3,kivy
 
 orientation = portrait
-
+android.ndk = 25b
 android.api = 33
 android.minapi = 21
 
