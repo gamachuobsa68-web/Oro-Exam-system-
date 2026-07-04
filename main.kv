@@ -1,38 +1,5 @@
-ScreenManager:
+#:kivy 2.3.0
 
+WindowManager:
     LoginScreen:
     DashboardScreen:
-    ExamScreen:
-    LeaderboardScreen:
-    ResultScreen:
-
-
-<LoginScreen>:
-    BoxLayout:
-        orientation: "vertical"
-        padding: 20
-
-        Label:
-            text: "Oro Exam System"
-            font_size: 28
-
-        TextInput:
-            id: user
-            hint_text: "Student ID"
-
-        Button:
-            text: "Login"
-            on_press: app.root.current = "dashboard"
-
-
-<DashboardScreen>:
-    BoxLayout:
-        orientation: "vertical"
-
-        Button:
-            text: "Start Exam"
-            on_press: app.root.current = "exam"
-
-        Button:
-            text: "Leaderboard"
-            on_press: app.root.current = "leaderboard"
