@@ -1,4 +1,4 @@
-name: Android APK (Docker Stable Build)
+name: Android APK (Stable Docker Build)
 
 on:
   push:
@@ -16,9 +16,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Force non-interactive mode
+        run: |
+          export CI=1
+          export DEBIAN_FRONTEND=noninteractive
+
       - name: Build APK
         run: |
-          buildozer -v android debug
+          yes | buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
