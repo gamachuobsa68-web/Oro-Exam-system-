@@ -1,20 +1,18 @@
 workflows:
   android-build:
-    name: Android Build (Kivy)
+    name: Android Build (Free Plan)
     max_build_duration: 60
 
-    instance_type: linux_x2
-
     scripts:
-      - name: Install system dependencies
+      - name: Install dependencies
         script: |
           sudo apt-get update
           sudo apt-get install -y git zip unzip openjdk-17-jdk \
-            build-essential autoconf libtool pkg-config python3-pip
+            build-essential python3-pip
 
-      - name: Install Python dependencies
+      - name: Install Buildozer
         script: |
-          python3 -m pip install --upgrade pip
+          pip3 install --upgrade pip
           pip3 install cython==0.29.36 buildozer
 
       - name: Build APK
