@@ -1,16 +1,14 @@
 workflows:
   android-build:
-    name: Android APK Build
+    name: Android Build (Kivy)
     max_build_duration: 60
 
     environment:
-      java: 17
+      python: 3.10
 
     scripts:
       - name: Install dependencies
         script: |
-          sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk
           pip install --upgrade pip
           pip install cython==0.29.36 buildozer
 
