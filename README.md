@@ -1,28 +1,23 @@
-# 🎓 Oro Exam System
+# Oro Exam System
 
-Mobile-based Kivy Exam System for students and teachers.
+Professional Exam Management System
 
----
+Features
 
-## ✨ Features
-- Student login
-- MCQ exam system
-- Auto grading
-- Leaderboard
-- PDF result export
-- SQLite database
+Student Login
 
----
+Teacher Panel
 
-## 🛠 Requirements
-- Python 3.10+
-- Kivy
-- Buildozer (for APK)
+Admin Panel
 
----
+MCQ Exam
 
-## 🚀 How to Run
+Auto Grading
 
-```bash
-pip install kivy
-python main.py
+PDF Report
+
+SQLite Database
+
+Leaderboard
+
+APK Build using Buildozer
