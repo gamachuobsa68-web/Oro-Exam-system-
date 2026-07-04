@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Install system packages
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y git zip unzip openjdk-17-jdk wget
@@ -28,9 +28,7 @@ jobs:
           pip install --upgrade pip
           pip install cython==0.29.36 buildozer
 
-      # =========================
-      # 🔥 FIX 1: MEMORY ISSUE
-      # =========================
+      # 🔥 FIX MEMORY ISSUE
       - name: Add Swap Memory
         run: |
           sudo fallocate -l 4G /swapfile
@@ -38,34 +36,25 @@ jobs:
           sudo mkswap /swapfile
           sudo swapon /swapfile
 
-      # =========================
-      # 🔥 FIX 2: ANDROID SDK SETUP
-      # =========================
-      - name: Setup Android environment
+      # 🔥 FIX ANDROID ENV
+      - name: Setup Android folder
         run: |
           mkdir -p ~/.android
           touch ~/.android/repositories.cfg
 
-      # =========================
-      # 🔥 FIX 3: LICENSE ACCEPT + BUILD TOOLS FIX
-      # =========================
+      # 🔥 INSTALL SAFE SDK (NO 37!)
       - name: Install Android SDK components
         run: |
-          yes | sdkmanager --licenses || true
           yes | sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" || true
 
-      # =========================
       # 🔥 BUILD APK
-      # =========================
-      - name: Build APK with Buildozer
+      - name: Build APK
         run: |
           buildozer android debug --verbose
 
-      # =========================
       # 📦 UPLOAD APK
-      # =========================
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OroExamSystem-APK
+          name: APK
           path: bin/*.apk
