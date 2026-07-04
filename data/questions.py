@@ -1,24 +1,17 @@
-# 🎓 ORO EXAM QUESTIONS
-
 QUESTIONS = [
     {
-        "question": "What is 2 + 2?",
-        "options": ["2", "3", "4", "5"],
-        "answer": "4"
+        "question": "What is 5 + 5?",
+        "options": ["8", "9", "10", "11"],
+        "answer": "10"
     },
     {
         "question": "Capital of Ethiopia?",
-        "options": ["Addis Ababa", "Nairobi", "Cairo", "London"],
+        "options": ["Addis Ababa", "Nairobi", "London", "Paris"],
         "answer": "Addis Ababa"
     },
     {
-        "question": "Which is a programming language?",
-        "options": ["HTML", "CSS", "Python", "Photoshop"],
-        "answer": "Python"
-    },
-    {
-        "question": "5 x 5 = ?",
-        "options": ["10", "20", "25", "30"],
-        "answer": "25"
+        "question": "Which one is Python?",
+        "options": ["Snake", "Programming Language", "Car", "Food"],
+        "answer": "Programming Language"
     }
 ]
