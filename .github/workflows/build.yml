@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install system dependencies
+      - name: Install system deps
         run: |
           sudo apt update
           sudo apt install -y \
@@ -33,6 +33,11 @@ jobs:
           pip install buildozer==1.5.0
           pip install python-for-android
 
+      - name: Fix Android SDK + Accept licenses (IMPORTANT FIX)
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
       - name: Build APK
         run: |
           buildozer android debug
@@ -40,5 +45,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OroExamAPK
+          name: APK
           path: bin/*.apk
