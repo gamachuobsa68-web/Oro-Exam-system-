@@ -1,4 +1,4 @@
-name: Build APK (AUTO FIX - NO PROMPT)
+name: Build APK (ULTIMATE FIX)
 
 on:
   workflow_dispatch:
@@ -10,34 +10,30 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ✅ Java 17 (required)
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      # ✅ Python 3.11 (stable)
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"- name: Clean Buildozer cache
-        run: |
-          rm -rf ~/.buildozer || true
+          python-version: "3.11"
 
-      # ✅ System dependencies
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y \
-            git zip unzip wget \
+          sudo apt install -y git zip unzip wget \
             build-essential autoconf automake libtool pkg-config \
             cmake libffi-dev libssl-dev zlib1g-dev openjdk-17-jdk
 
-      # ✅ Buildozer install
+      # 🔥 IMPORTANT: CLEAN OLD BROKEN SDK FIRST
+      - name: Clean buildozer environment
+        run: |
+          rm -rf ~/.buildozer || true
+          rm -rf ~/.android || true
+
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip setuptools wheel
@@ -45,19 +41,14 @@ jobs:
           pip install buildozer==1.5.0
           pip install python-for-android
 
-      # 🔥 IMPORTANT FIX (NO SDK, NO PROMPT, NO 37)
-      - name: Force Buildozer clean environment
+      # 🔥 FORCE BUILD WITHOUT OLD SDK PATH
+      - name: Build APK (NO SDKMANAGER MODE)
         run: |
+          export ANDROID_SKIP_SDK=true
           export ANDROIDSDK="$HOME/.buildozer/android/platform/android-sdk"
-          rm -rf $ANDROIDSDK || true
-          mkdir -p $ANDROIDSDK
 
-      # 🚀 BUILD APK (ALL AUTOMATIC)
-      - name: Build APK
-        run: |
-          yes | buildozer android debug
+          buildozer android debug
 
-      # 📦 Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
