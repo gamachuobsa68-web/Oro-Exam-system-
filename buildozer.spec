@@ -1,29 +1,67 @@
 [app]
+
+# (str) Title of your application
 title = Oro Exam System
-package.name = oroexam
-package.domain = org.gamachu
 
+# (str) Package name
+package.name = oroexamsystem
+
+# (str) Package domain (needed for android packaging)
+package.domain = org.oroexam
+
+# (str) Source code directory (where main.py is located)
 source.dir = .
-source.include_exts = py,kv,png,jpg,jpeg,json,db,txt,ttf
 
-version = 1.0
+# (list) Source files to include (leave empty to include all)
+source.include_exts = py,png,jpg,kv,atlas,json,txt,db,sqlite
 
-requirements = python3,kivy,pillow
+# (list) Application requirements
+# SQLite3, Kivy, and other essential modules for Oro Exam System
+requirements = python3,kivy==2.2.0,pillow,sqlite3,urllib3,certifi,openssl
 
+# (str) App orientation (portrait, landscape or all)
 orientation = portrait
-fullscreen = 0
 
-android.api = 34
-android.build_tools = 34.0.0
-android.minapi = 24
-android.ndk = 25b
+# (bool) Use fullscreen mode
+fullscreen = 1
 
-android.archs = arm64-v8a,armeabi-v7a
+# ==========================================
+# Android Specific Configurations
+# ==========================================
 
-android.permissions = INTERNET,CAMERA,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
+# (int) Android API to use (API 33 is highly recommended for modern Play Store requirements)
+android.api = 33
 
+# (int) Minimum API your APK will support
+android.minapi = 21
+
+# (int) Android SDK version to use
+android.sdk = 33
+
+# (str) Android NDK version (blank allows Buildozer to select compatible version)
+# android.ndk = 25b
+
+# (bool) Use private storage for your app (True or False)
+android.private_storage = True
+
+# (bool) Accept SDK license without prompting (CRITICAL FOR GITHUB ACTIONS AND AUTOMATED BUILDS!)
+android.accept_sdk_license = True
+
+# (str) Android entry point, default is main.py
+android.entrypoint = main.py
+
+# (list) Supported architectures (both are required for modern 64-bit Android devices)
+android.archs = armeabi-v7a, arm64-v8a
+
+# (bool) Allow backup of app data
+android.allow_backup = True
+
+# (list) Permissions your app requires (uncomment and add if you need internet or storage)
+android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
+
+[buildozer]
+# (int) Log level (0 = error only, 1 = info, 2 = debug with command output)
 log_level = 2
-warn_on_root = 0
 
-# IMPORTANT (fix build crashes)
-p4a.branch = master
+# (int) Display warning if buildozer is run as root (0 = false, 1 = true)
+warn_on_root = 1
