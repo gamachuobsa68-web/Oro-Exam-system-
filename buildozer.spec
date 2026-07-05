@@ -42,7 +42,7 @@ android.minapi = 21
 android.sdk = 33
 
 # (str) Android NDK version (blank allows Buildozer to select compatible version)
-# android.ndk = 25b
+android.ndk = 25b
 
 # (bool) Use private storage for your app (True or False)
 android.private_storage = True
