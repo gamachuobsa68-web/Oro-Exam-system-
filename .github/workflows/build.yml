@@ -1,53 +1,53 @@
-name: Build Android APK
+name: Android Build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install Java
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "17"
 
-      - name: Install Linux Dependencies
+      - name: Install system packages
         run: |
-          sudo apt update
-          sudo apt install -y \
-            zip unzip git build-essential \
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip build-essential \
+            autoconf automake libtool pkg-config \
             libffi-dev libssl-dev \
-            libsqlite3-dev sqlite3 \
             libjpeg-dev zlib1g-dev \
-            autoconf automake libtool \
-            pkg-config cmake
+            libsqlite3-dev sqlite3
 
-      - name: Install Python Packages
+      - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip
           pip install Cython==0.29.37
           pip install buildozer==1.5.0
 
       - name: Build APK
+        env:
+          BUILDOZER_WARN_ON_ROOT: 0
         run: |
           buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: OroExam-APK
+          name: app-debug
           path: bin/*.apk
