@@ -1,63 +1,16 @@
-name: Android APK Build (FULL FIXED)
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # 🔥 FIX 1: JAVA 17 (CRITICAL)
-      - name: Setup Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      # 🔥 FIX 2: Python 3.11 (stable for buildozer)
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      # 🔥 SYSTEM DEPENDENCIES
-      - name: Install system packages
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            git zip unzip wget \
-            openjdk-17-jdk \
-            autoconf automake libtool pkg-config \
-            cmake libffi-dev libssl-dev zlib1g-dev
-
-      # 🔥 BUILD OZER
-      - name: Install Buildozer
-        run: |
-          python -m pip install --upgrade pip setuptools wheel
-          pip install Cython==0.29.36
-          pip install buildozer==1.5.0
-          pip install python-for-android
-
-      # 🔥 FIX 3: ANDROID SDK (SEC3 + PATH FIX + AIDL FIX)
-      - name: Setup Android SDK (FIXED)
+- name: Setup Android SDK (FINAL FIX SDKMANAGER)
         run: |
           export ANDROID_SDK_ROOT=$HOME/android-sdk
           mkdir -p $ANDROID_SDK_ROOT
 
           cd $ANDROID_SDK_ROOT
 
-          # download cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O tools.zip
-          unzip tools.zip
+          unzip -q tools.zip
 
-          mkdir -p cmdline-tools
-          mv cmdline-tools latest
+          # 🔥 FIX STRUCTURE (IMPORTANT)
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
 
           export CMDLINE_TOOLS=$ANDROID_SDK_ROOT/cmdline-tools/latest
           export PATH=$CMDLINE_TOOLS/bin:$PATH
@@ -65,24 +18,15 @@ jobs:
 
           echo "PATH=$PATH"
 
-          # Accept licenses (FIX)
-          yes | sdkmanager --licenses || true
+          # 🔥 NOW sdkmanager EXISTS HERE
+          ls $CMDLINE_TOOLS/bin
 
-          # Install stable SDK components
-          sdkmanager \
+          chmod +x $CMDLINE_TOOLS/bin/sdkmanager
+
+          yes | $CMDLINE_TOOLS/bin/sdkmanager --licenses || true
+
+          $CMDLINE_TOOLS/bin/sdkmanager \
             --sdk_root=$ANDROID_SDK_ROOT \
             "platform-tools" \
             "platforms;android-34" \
             "build-tools;34.0.0"
-
-      # 🔥 BUILD APK
-      - name: Build APK
-        run: |
-          buildozer android debug
-
-      # 🔥 UPLOAD APK
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: OroExamSystem-APK
-          path: bin/*.apk
