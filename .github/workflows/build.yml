@@ -1,4 +1,4 @@
-name: Build APK
+name: Android Build Fix
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install system deps
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
@@ -33,10 +33,17 @@ jobs:
           pip install buildozer==1.5.0
           pip install python-for-android
 
-      - name: Fix Android SDK + Accept licenses (IMPORTANT FIX)
+      - name: Install Android SDK (FIXED + NO 37)
         run: |
+          mkdir -p $HOME/android-sdk
+          export ANDROID_SDK_ROOT=$HOME/android-sdk
+
           yes | sdkmanager --licenses || true
-          sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0"
 
       - name: Build APK
         run: |
@@ -45,5 +52,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: APK
+          name: app-debug
           path: bin/*.apk
