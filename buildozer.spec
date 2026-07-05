@@ -22,7 +22,7 @@ source.include_exts = py,png,jpg,kv,atlas,json,txt,db,sqlite
 # SQLite3, Kivy, and other essential modules for Oro Exam System
 requirements = python3,kivy==2.2.0,pillow,sqlite3,urllib3,certifi,openssl
 
-# (str) python-for-android branch to use (CRITICAL FIX FOR SDKMANAGER!)
+# (str) python-for-android branch to use
 p4a.branch = master
 
 # (str) App orientation (portrait, landscape or all)
