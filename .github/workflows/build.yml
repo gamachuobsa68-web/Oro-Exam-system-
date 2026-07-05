@@ -1,4 +1,4 @@
-name: Android Build Fix
+name: Android Build (FIXED SEC3)
 
 on:
   workflow_dispatch:
@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -24,7 +24,7 @@ jobs:
           sudo apt install -y \
             git zip unzip openjdk-17-jdk \
             autoconf automake libtool pkg-config \
-            cmake libffi-dev libssl-dev zlib1g-dev
+            cmake libffi-dev libssl-dev zlib1g-dev wget
 
       - name: Install Buildozer
         run: |
@@ -33,14 +33,25 @@ jobs:
           pip install buildozer==1.5.0
           pip install python-for-android
 
-      - name: Install Android SDK (FIXED + NO 37)
+      # 🔥 FIX SEC3 (SDK + AIDL + LICENSE)
+      - name: Setup Android SDK (SEC3 FIX)
         run: |
-          mkdir -p $HOME/android-sdk
           export ANDROID_SDK_ROOT=$HOME/android-sdk
+          mkdir -p $ANDROID_SDK_ROOT
+
+          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+          cd $ANDROID_SDK_ROOT/cmdline-tools
+
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O tools.zip
+          unzip tools.zip
+          mv cmdline-tools latest
+
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
 
           yes | sdkmanager --licenses || true
 
           sdkmanager \
+            --sdk_root=$ANDROID_SDK_ROOT \
             "platform-tools" \
             "platforms;android-34" \
             "build-tools;34.0.0"
@@ -52,5 +63,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: OroExamSystem-APK
           path: bin/*.apk
