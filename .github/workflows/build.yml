@@ -1,4 +1,4 @@
-name: Build Android APK (STABLE FIX)
+name: Build Android APK (CLEAN STABLE)
 
 on:
   workflow_dispatch:
@@ -13,8 +13,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # ✅ Java 17 (required)
-      - name: Setup Java
+      # ✅ Java 17 (required for modern SDK)
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -27,15 +27,16 @@ jobs:
           python-version: "3.11"
 
       # ✅ System dependencies
-      - name: Install system packages
+      - name: Install system dependencies
         run: |
           sudo apt update
           sudo apt install -y \
-            git zip unzip openjdk-17-jdk \
+            git zip unzip wget \
+            openjdk-17-jdk \
             build-essential autoconf automake libtool pkg-config \
             cmake libffi-dev libssl-dev zlib1g-dev
 
-      # ✅ Install Buildozer
+      # ✅ Install Buildozer + p4a
       - name: Install Buildozer
         run: |
           python -m pip install --upgrade pip setuptools wheel
@@ -43,14 +44,17 @@ jobs:
           pip install buildozer==1.5.0
           pip install python-for-android
 
-      # 🔥 IMPORTANT: NO MANUAL SDK INSTALL (FIX EVERYTHING)
+      # ❗ IMPORTANT: DO NOT MANUALLY INSTALL SDK
+      # Buildozer handles SDK automatically (fixes your sdkmanager errors)
+
+      # 🔥 Build APK
       - name: Build APK
         run: |
           buildozer -v android debug
 
-      # ✅ Upload APK
+      # 📦 Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: OroExam-APK
           path: bin/*.apk
