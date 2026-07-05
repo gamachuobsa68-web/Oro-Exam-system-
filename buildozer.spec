@@ -9,6 +9,9 @@ package.name = oroexamsystem
 # (str) Package domain (needed for android packaging)
 package.domain = org.oroexam
 
+# (str) Application version
+version = 1.0.0
+
 # (str) Source code directory (where main.py is located)
 source.dir = .
 
