@@ -1,21 +1,24 @@
 [app]
 
 title = Oro Exam System
-package.name = oroexamsystem
+package.name = oroexam
 package.domain = org.gamachu
 
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,json,db,txt,ttf,atlas
+source.include_exts = py,png,jpg,jpeg,kv,json,db,txt,csv,ttf
 
 version = 1.0
 
-requirements = python3,kivy,pillow,sqlite3
+requirements = python3,kivy==2.3.0,pillow,sqlite3
 
 orientation = portrait
 
 fullscreen = 0
 
-android.permissions = INTERNET,CAMERA,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE
+icon.filename = assets/icon.png
+presplash.filename = assets/presplash.png
+
+android.permissions = INTERNET,CAMERA,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE
 
 android.api = 34
 android.minapi = 24
@@ -24,15 +27,8 @@ android.accept_sdk_license = True
 
 android.archs = arm64-v8a,armeabi-v7a
 
-presplash.filename = assets/presplash.png
-icon.filename = assets/icon.png
+android.enable_androidx = True
 
 log_level = 2
 
 warn_on_root = 0
-
-# Do NOT set:
-# p4a.branch
-# p4a.commit
-# p4a.url
-# p4a.fork
