@@ -1,10 +1,9 @@
-name: Build Oro Exam System APK
+name: Build Android APK
 
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -12,86 +11,43 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    - name: Setup Java JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
-    - name: Install System Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          build-essential \
-          git \
-          ffmpeg \
-          libsdl2-dev \
-          libsdl2-image-dev \
-          libsdl2-mixer-dev \
-          libsdl2-ttf-dev \
-          libportmidi-dev \
-          libswscale-dev \
-          libavformat-dev \
-          libavcodec-dev \
-          zlib1g-dev \
-          libsqlite3-dev \
-          sqlite3 \
-          bzip2 \
-          libbz2-dev \
-          libssl-dev \
-          openssl \
-          libgdbm-dev \
-          libgdbm-compat-dev \
-          liblzma-dev \
-          libreadline-dev \
-          libncursesw5-dev \
-          libffi-dev \
-          uuid-dev \
-          tar \
-          unzip \
-          zip \
-          pkg-config
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            zip unzip git build-essential \
+            libffi-dev libssl-dev \
+            libsqlite3-dev sqlite3 \
+            libjpeg-dev zlib1g-dev \
+            autoconf automake libtool \
+            pkg-config cmake
 
-    - name: Install Pip Packages (Cython & Buildozer)
-      run: |
-        pip install --upgrade pip
-        pip install cython==0.29.36
-        pip install git+https://github.com/kivy/buildozer.git@master
+      - name: Install Python Packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install Cython==0.29.37
+          pip install buildozer==1.5.0
 
-    - name: Cache Buildozer Directories
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.buildozer
-          .buildozer
-        key: ${{ runner.os }}-buildozer-v3-${{ hashFiles('buildozer.spec') }}
-        restore-keys: |
-          ${{ runner.os }}-buildozer-v3-
+      - name: Build APK
+        run: |
+          buildozer android debug
 
-    - name: Pre-accept Android SDK Licenses
-      run: |
-        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-        if [ -d "$ANDROID_HOME/licenses" ]; then
-          cp -r "$ANDROID_HOME/licenses"/* ~/.buildozer/android/platform/android-sdk/licenses/
-        fi
-
-    - name: Build Android APK with Buildozer
-      run: |
-        buildozer android debug
-      env:
-        GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx2048m"
-
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Oro-Exam-System-APK
-        path: bin/*.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: OroExam-APK
+          path: bin/*.apk
