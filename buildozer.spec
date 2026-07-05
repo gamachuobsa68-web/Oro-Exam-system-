@@ -2,24 +2,21 @@
 
 title = Oro Exam System
 package.name = oroexam
-package.domain = org.oro
+package.domain = org.example
 
 source.dir = .
-
-source.include_exts = py,kv,png,jpg
+source.include_exts = py,png,jpg,kv,atlas
 
 version = 1.0
 
-requirements = python3,kivy
+requirements = python3,kivy,pyjnius
 
 orientation = portrait
-android.ndk = 25b
+
+# Android settings
 android.api = 33
 android.minapi = 21
+android.ndk = 25b
+android.arch = arm64-v8a
 
-android.archs = arm64-v8a,armeabi-v7a
-
-android.permissions = INTERNET
-
-icon.filename = assets/icon.png
-presplash.filename = assets/splash.png
+# Remove all broken packages like "android", "kivy==version", etc.
