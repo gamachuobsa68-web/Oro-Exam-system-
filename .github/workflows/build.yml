@@ -76,6 +76,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-buildozer-v3-
 
+    - name: Pre-accept Android SDK Licenses
+      run: |
+        mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        if [ -d "$ANDROID_HOME/licenses" ]; then
+          cp -r "$ANDROID_HOME/licenses"/* ~/.buildozer/android/platform/android-sdk/licenses/
+        fi
+
     - name: Build Android APK with Buildozer
       run: |
         buildozer android debug
