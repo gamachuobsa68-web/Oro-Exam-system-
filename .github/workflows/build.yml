@@ -28,20 +28,38 @@ jobs:
         python -m pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer kivy virtualenv sh
 
-    - name: Pre-Accept Buildozer SDK Licenses (CRITICAL FIX)
+    - name: Setup Private Stable Android SDK & NDK
       run: |
-        # Folder SDK kan Buildozer ofiin ijaaru durstinee uumuu
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
+        # 1. Folder haaraa qopheessuu
+        export LOCAL_SDK=$HOME/local-android-sdk
+        mkdir -p $LOCAL_SDK/cmdline-tools/latest
         
-        # Lisenasii hunda 'yes' jedhanii bifa kanaan folder Buildozer keessa kaa'uu
-        # Kuni Buildozer akka inni license 37 gaffii malee fudhatu taasisa
-        echo -e "\n244d24a4e721fcc1d54547d9a35379a224783249" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
-        echo -e "\nd56f118745b851737bb973e87394746a9545314c" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-arm-dbt-license
+        # 2. Command-line tools isa sirrii fi stable ta'e gadi fiduu
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
+        unzip -q cmdline.zip
+        mv cmdline-tools/* $LOCAL_SDK/cmdline-tools/latest/
+        rm -rf cmdline-tools cmdline.zip
+        
+        # 3. Path 'tools/bin/sdkmanager' kan Buildozer dhiphisu sun bifa symlink'n uumee gubbaa kaa'uu
+        mkdir -p $LOCAL_SDK/tools
+        ln -s $LOCAL_SDK/cmdline-tools/latest/bin $LOCAL_SDK/tools/bin
+        
+        # 4. Lisenasii Google dursee heyyamsiisuu
+        mkdir -p $LOCAL_SDK/licenses
+        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK --licenses
+        
+        # 5. Build-tools fi platform barbaachisu fe'uu
+        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK "platform-tools" "build-tools;33.0.2" "platforms;android-33"
+        
+        # 6. NDK Stable ta'e (r25c) gadi fiduu (r28c isa falanqa uumu sana dhiisnee)
+        mkdir -p $HOME/local-android-ndk
+        wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O ndk.zip
+        unzip -q ndk.zip -d $HOME/local-android-ndk/
+        mv $HOME/local-android-ndk/android-ndk-r25c $HOME/local-android-ndk/android-ndk
+        rm ndk.zip
 
     - name: Build with Buildozer
       run: |
-        # APK gufannoo malee ijaaruu
         buildozer -v android debug
 
     - name: Upload APK
