@@ -18,7 +18,7 @@ android.api = 33
 android.minapi = 21
 android.build_tools_version = 33.0.2
 
-# LOCAL PATH FAlanqa DHUUNFAA KEENYA ITTI AGARSIISUU (Root Permission kan hin gaafanne)
+# Path haaraa fi NDK stable ta'e (r25c) itti agarsiisuu
 android.sdk_path = /home/runner/local-android-sdk
 android.ndk_path = /home/runner/local-android-ndk/android-ndk
 
