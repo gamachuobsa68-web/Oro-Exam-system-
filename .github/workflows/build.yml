@@ -22,10 +22,22 @@ jobs:
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip
         pip3 install --user --upgrade buildozer kivy Cython
 
+    - name: Pre-install Android SDK Tools (Fix AIDL & Build-Tools)
+      run: |
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
+        unzip -q cmdline.zip
+        mv cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+        rm -rf cmdline-tools cmdline.zip
+        
+        # Heyyama (Licenses) fi Build-Tools kallattiin fe'uuf
+        export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+        yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "platform-tools" "build-tools;33.0.2" "platforms;android-33"
+
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # Ajaja 'yes' fi 'licenses' guutummatti dhiifneerra, 'debug' qofa run goona
+        buildozer android clean
         buildozer -v android debug
 
     - name: Upload APK
