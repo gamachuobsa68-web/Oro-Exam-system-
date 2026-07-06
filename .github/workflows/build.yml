@@ -20,17 +20,37 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
-        # Buildozer fi Cython vershinii sirrii fe'uu
         pip3 install --user --upgrade "Cython<3.0.0" buildozer kivy
 
-    - name: Setup Android SDK and NDK Paths (System Fix)
+    - name: Custom Android SDK & NDK Setup (Safe Local Path)
       run: |
-        # SDK/NDK duraan Ubuntu Actions irratti fe'amee jiru dirqamaan licenses heyyamuu
-        mkdir -p $ANDROID_HOME/licenses
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        # 1. Falanqa dhuunfaa (Local SDK) uumuu
+        export LOCAL_SDK=$HOME/local-android-sdk
+        mkdir -p $LOCAL_SDK/cmdline-tools/latest
         
-        # Build-Tools 33 fi 37 durstinee sirreessuuf
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.2" "build-tools;37.0.0" "platforms;android-33"
+        # 2. Commandline tools gadi fiduu
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
+        unzip -q cmdline.zip
+        mv cmdline-tools/* $LOCAL_SDK/cmdline-tools/latest/
+        rm -rf cmdline-tools cmdline.zip
+        
+        # 3. FIX: Buildozer falanqa 'tools/bin/sdkmanager' jedhu waan barbaaduuf symlink uumuu
+        mkdir -p $LOCAL_SDK/tools
+        ln -s $LOCAL_SDK/cmdline-tools/latest/bin $LOCAL_SDK/tools/bin
+        
+        # 4. Licenses hunda guutummatti heyyamuu
+        mkdir -p $LOCAL_SDK/licenses
+        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK --licenses
+        
+        # 5. Build-tools, platform-tools fi platforms fe'uu
+        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK "platform-tools" "build-tools;33.0.2" "platforms;android-33"
+        
+        # 6. Android NDK r28c bifa qulqulluun gadi fiduu
+        mkdir -p $HOME/local-android-ndk
+        wget -q https://dl.google.com/android/repository/android-ndk-r28c-linux.zip -O ndk.zip
+        unzip -q ndk.zip -d $HOME/local-android-ndk/
+        mv $HOME/local-android-ndk/android-ndk-r28c $HOME/local-android-ndk/android-ndk
+        rm ndk.zip
 
     - name: Force Create Python-for-Android Directory
       run: |
@@ -40,7 +60,7 @@ jobs:
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # APK gufannoo malee ijaaruu
+        # APK gufannoo tokko malee ijaaruu
         buildozer -v android debug
 
     - name: Upload APK
