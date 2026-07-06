@@ -25,7 +25,7 @@ jobs:
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # Ajaja 'licenses' san dhiifnee kallattiin 'debug' irratti auto-accept akka godhu gochuu
+        # Ajaja 'yes' fi 'licenses' guutummatti dhiifneerra, 'debug' qofa run goona
         buildozer -v android debug
 
     - name: Upload APK
