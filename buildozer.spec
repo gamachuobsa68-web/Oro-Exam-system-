@@ -19,8 +19,8 @@ android.minapi = 21
 android.build_tools_version = 33.0.2
 android.accept_licenses = True
 
-# KUNI RAKKOO 'FileNotFoundError' SAN GUUTUMMATTI NI FURA (PATH AGARSIISUU)
-p4a.dir = /home/runner/p4a-source
+# Path folder nuyi olitti uumnee
+p4a.dir = .buildozer/android/platform/python-for-android
 
 android.archs = armeabi-v7a, arm64-v8a
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
