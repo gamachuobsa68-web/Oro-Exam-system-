@@ -16,12 +16,9 @@ fullscreen = 1
 
 android.api = 33
 android.minapi = 21
-android.build_tools_version = 33.0.2
 android.accept_licenses = True
 android.archs = armeabi-v7a, arm64-v8a
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
-
-# PATH BARBAADU HUNDA HAQNEERRA - BUILDOZER OFIIN AKKA QOPHEESSUUF
 
 [buildozer]
 log_level = 2
