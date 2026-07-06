@@ -22,18 +22,18 @@ jobs:
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
         pip3 install --user --upgrade "Cython<3.0.0" buildozer kivy
 
-    - name: Build with Buildozer (Safe Step Order)
+    - name: Pre-clone Python-for-Android to Home
+      run: |
+        # Folder clean ta'uun jalaa hin hafne (Home directory) keessatti clone gochuu
+        cd $HOME
+        git clone --depth 1 -b master https://github.com/kivy/python-for-android.git p4a-source
+
+    - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        
-        # 1. Jalqaba clean gochuun falanqa qulqulleessuuf
+        # Qulqulleessuu (clean)
         buildozer android clean
-        
-        # 2. Erga clean godhee booda Python-for-Android ofiin asitti gadi fiduu
-        mkdir -p .buildozer/android/platform
-        git clone --depth 1 -b master https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
-        
-        # 3. Amma APK haala kanaan gufannoo malee ijaara
+        # APK uumuu
         buildozer -v android debug
 
     - name: Upload APK
