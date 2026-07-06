@@ -22,18 +22,18 @@ jobs:
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
         pip3 install --user --upgrade "Cython<3.0.0" buildozer kivy
 
-    - name: Pre-clone Python-for-Android (Fix Missing Directory Error)
-      run: |
-        # Falanqa Buildozer uumee dursee koodii p4a internet irraa gadi fida
-        mkdir -p .buildozer/android/platform
-        git clone --depth 1 -b master https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
-
-    - name: Build with Buildozer
+    - name: Build with Buildozer (Safe Step Order)
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # Qulqulleessanii bifa haaraan jalqabsiisuu
+        
+        # 1. Jalqaba clean gochuun falanqa qulqulleessuuf
         buildozer android clean
-        # APK uumuu
+        
+        # 2. Erga clean godhee booda Python-for-Android ofiin asitti gadi fiduu
+        mkdir -p .buildozer/android/platform
+        git clone --depth 1 -b master https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
+        
+        # 3. Amma APK haala kanaan gufannoo malee ijaara
         buildozer -v android debug
 
     - name: Upload APK
