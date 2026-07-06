@@ -11,11 +11,17 @@ orientation = portrait
 fullscreen = 1
 
 # ==============================================================================
-# Android specific configuration
+# Android specific configuration (FIXED PATHS)
 # ==============================================================================
 
 android.api = 33
 android.minapi = 21
+android.build_tools_version = 33.0.2
+
+# Path meeshaa qulqulluu fi bifa symlink'n qopheessine kana agarsiisuu
+android.sdk_path = /home/runner/local-android-sdk
+android.ndk_path = /home/runner/local-android-ndk/android-ndk
+
 android.accept_licenses = True
 android.archs = armeabi-v7a, arm64-v8a
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
