@@ -1,4 +1,4 @@
-name: Build APK (Kivy Clean)
+name: Build Kivy Android APK (Stable Fix)
 
 on:
   push:
@@ -10,14 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    # ----------------------------
+    # 1. Checkout code
+    # ----------------------------
+    - name: Checkout repository
       uses: actions/checkout@v4
 
+    # ----------------------------
+    # 2. Setup Python (FIXED)
+    # ----------------------------
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: "3.10"
 
+    # ----------------------------
+    # 3. Install system dependencies
+    # ----------------------------
     - name: Install system packages
       run: |
         sudo apt update
@@ -26,15 +35,49 @@ jobs:
         sudo apt install -y autoconf libtool pkg-config
         sudo apt install -y zlib1g-dev libncurses5-dev libffi-dev libssl-dev
 
-    - name: Install Buildozer
+    # ----------------------------
+    # 4. Install Buildozer
+    # ----------------------------
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install cython buildozer
 
+    # ----------------------------
+    # 5. Fix Android SDK + licenses + build-tools
+    # ----------------------------
+    - name: Setup Android SDK (FIX ALL ERRORS)
+      run: |
+        mkdir -p $HOME/.android
+        touch $HOME/.android/repositories.cfg
+
+        # Accept licenses automatically
+        yes | sdkmanager --licenses || true
+
+        # Install SAFE SDK components (NO 37!)
+        sdkmanager "platform-tools" \
+                   "platforms;android-33" \
+                   "build-tools;34.0.0"
+
+    # ----------------------------
+    # 6. Cache Buildozer (speed)
+    # ----------------------------
+    - name: Cache Buildozer
+      uses: actions/cache@v4
+      with:
+        path: .buildozer
+        key: buildozer-${{ runner.os }}
+
+    # ----------------------------
+    # 7. Init Buildozer
+    # ----------------------------
     - name: Initialize Buildozer
       run: |
         buildozer init || true
 
+    # ----------------------------
+    # 8. Build APK
+    # ----------------------------
     - name: Build APK
       run: |
         buildozer android debug
