@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python 3.10 (CRITICAL FOR STABILITY)
+    - name: Set up Python 3.10
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
@@ -25,41 +25,18 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake
-        # Python 3.10 irratti meeshaalee sirrii fe'uu
         python -m pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer kivy virtualenv sh
 
-    - name: Custom Android SDK & NDK Setup
+    - name: Accept Android SDK Licenses
       run: |
-        export LOCAL_SDK=$HOME/local-android-sdk
-        mkdir -p $LOCAL_SDK/cmdline-tools/latest
-        
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
-        unzip -q cmdline.zip
-        mv cmdline-tools/* $LOCAL_SDK/cmdline-tools/latest/
-        rm -rf cmdline-tools cmdline.zip
-        
-        mkdir -p $LOCAL_SDK/tools
-        ln -s $LOCAL_SDK/cmdline-tools/latest/bin $LOCAL_SDK/tools/bin
-        
-        mkdir -p $LOCAL_SDK/licenses
-        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK --licenses
-        
-        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK "platform-tools" "build-tools;33.0.2" "platforms;android-33"
-        
-        mkdir -p $HOME/local-android-ndk
-        wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O ndk.zip
-        unzip -q ndk.zip -d $HOME/local-android-ndk/
-        mv $HOME/local-android-ndk/android-ndk-r25c $HOME/local-android-ndk/android-ndk
-        rm ndk.zip
-
-    - name: Force Create Python-for-Android Directory
-      run: |
-        mkdir -p .buildozer/android/platform
-        git clone --depth 1 -b master https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
+        # SDK durtii GitHub Actions irratti argamuun licenses heyyamuu qofa
+        mkdir -p $ANDROID_HOME/licenses
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
     - name: Build with Buildozer
       run: |
+        # Buildozer akka inni ofiin meeshaa durtii (system SDK/NDK) dubbisu qofa nuyi ajajni
         buildozer -v android debug
 
     - name: Upload APK
