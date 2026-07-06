@@ -18,9 +18,8 @@ android.api = 33
 android.minapi = 21
 android.build_tools_version = 33.0.2
 
-# Path dhuunfaa keenya irra deebinee asittis mirkaneessuu
+# Path sirrii symlink itti uumne kanaan gadii agarsiisuu
 android.sdk_path = /home/runner/local-android-sdk
-android.ndk_path = /home/runner/local-android-ndk/android-ndk
 
 android.accept_licenses = True
 android.archs = armeabi-v7a, arm64-v8a
