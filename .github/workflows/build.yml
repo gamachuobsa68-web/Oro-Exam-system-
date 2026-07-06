@@ -19,13 +19,13 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y pipexec python3-pip build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake
-        pip3 install --user --upgrade buildozer kivy
+        sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip
+        pip3 install --user --upgrade buildozer kivy Cython
 
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        yes | buildozer android licenses
+        # Ajaja 'licenses' san dhiifnee kallattiin 'debug' irratti auto-accept akka godhu gochuu
         buildozer -v android debug
 
     - name: Upload APK
