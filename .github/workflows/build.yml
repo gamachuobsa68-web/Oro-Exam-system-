@@ -28,15 +28,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer kivy virtualenv sh
 
-    - name: Accept Android SDK Licenses
+    - name: Pre-Accept Buildozer SDK Licenses (CRITICAL FIX)
       run: |
-        # SDK durtii GitHub Actions irratti argamuun licenses heyyamuu qofa
-        mkdir -p $ANDROID_HOME/licenses
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        # Folder SDK kan Buildozer ofiin ijaaru durstinee uumuu
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
+        
+        # Lisenasii hunda 'yes' jedhanii bifa kanaan folder Buildozer keessa kaa'uu
+        # Kuni Buildozer akka inni license 37 gaffii malee fudhatu taasisa
+        echo -e "\n244d24a4e721fcc1d54547d9a35379a224783249" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
+        echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-preview-license
+        echo -e "\nd56f118745b851737bb973e87394746a9545314c" > $HOME/.buildozer/android/platform/android-sdk/licenses/android-sdk-arm-dbt-license
 
     - name: Build with Buildozer
       run: |
-        # Buildozer akka inni ofiin meeshaa durtii (system SDK/NDK) dubbisu qofa nuyi ajajni
+        # APK gufannoo malee ijaaruu
         buildozer -v android debug
 
     - name: Upload APK
