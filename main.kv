@@ -1,5 +1,127 @@
-#:kivy 2.3.0
-
-WindowManager:
+ScreenManager:
     LoginScreen:
-    DashboardScreen:
+    StudentDashboard:
+    ExamScreen:
+    TeacherDashboard:
+
+<LoginScreen>:
+    name: 'login'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [30, 50, 30, 50]
+        spacing: 20
+        canvas.before:
+            Color:
+                rgba: 0.1, 0.15, 0.2, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        Label:
+            text: "Oro-Exam System"
+            font_size: 32
+            bold: True
+            size_hint_y: None
+            height: 80
+        TextInput:
+            id: username
+            hint_text: "Maqaa Fayyadamaa"
+            multiline: False
+            size_hint_y: None
+            height: 50
+        TextInput:
+            id: password
+            hint_text: "Jecha Icchitii"
+            password: True
+            multiline: False
+            size_hint_y: None
+            height: 50
+        Label:
+            id: error_msg
+            text: ""
+            color: 1, 0, 0, 1
+            size_hint_y: None
+            height: 30
+        Button:
+            text: "Seeni"
+            font_size: 18
+            size_hint_y: None
+            height: 50
+            background_color: 0, 0.6, 0.8, 1
+            on_press: root.login_user()
+
+<StudentDashboard>:
+    name: 'student_dashboard'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30
+        spacing: 20
+        Label:
+            text: "Baga Nagaan Dhufte, Barataa!"
+            font_size: 26
+            bold: True
+        Button:
+            text: "Qormaata Jalqabi"
+            size_hint_y: None
+            height: 60
+            background_color: 0.1, 0.7, 0.3, 1
+            on_press: root.manager.current = 'exam'
+        Button:
+            text: "Ba'i (Logout)"
+            size_hint_y: None
+            height: 50
+            background_color: 0.8, 0.2, 0.2, 1
+            on_press: root.manager.current = 'login'
+
+<ExamScreen>:
+    name: 'exam'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+        Label:
+            id: question_text
+            text: "Gaaffii..."
+            font_size: 22
+            text_size: self.width, None
+            halign: 'center'
+            size_hint_y: None
+            height: 100
+        BoxLayout:
+            id: options_box
+            orientation: 'vertical'
+            spacing: 10
+            size_hint_y: 0.6
+        Button:
+            id: action_btn
+            text: "Itti fuf"
+            size_hint_y: None
+            height: 50
+            background_color: 0, 0.5, 0.7, 1
+            disabled: True
+            on_press: root.next_question()
+
+<TeacherDashboard>:
+    name: 'teacher_dashboard'
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 30
+        spacing: 20
+        Label:
+            text: "Koochoo Bulchiinsa Barsiisaa"
+            font_size: 26
+            bold: True
+        Label:
+            id: scores_list
+            text: "Qabxiin barattootaa asitti gabaafama..."
+            font_size: 16
+        Button:
+            text: "Qabxii Haoromsi"
+            size_hint_y: None
+            height: 50
+            on_press: root.load_scores()
+        Button:
+            text: "Ba'i"
+            size_hint_y: None
+            height: 50
+            background_color: 0.8, 0.2, 0.2, 1
+            on_press: root.manager.current = 'login'
