@@ -22,9 +22,9 @@ jobs:
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
         pip3 install --user --upgrade buildozer kivy Cython
 
-    - name: Pre-install Android SDK Tools & Python-for-Android
+    - name: Pre-install Android SDK Tools & Fix Path
       run: |
-        # 1. Android SDK fi Build Tools qopheessuu
+        # Android SDK fi Build Tools qopheessuu
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
         unzip -q cmdline.zip
@@ -34,19 +34,12 @@ jobs:
         export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
         yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "platform-tools" "build-tools;33.0.2" "platforms;android-33"
 
-        # 2. Dogoggora 'python-for-android' dhabamsiisuuf (Ofiin dursee clone gochuu)
-        mkdir -p $GITHUB_WORKSPACE/.buildozer/android/platform
-        git clone https://github.com/kivy/python-for-android.git $GITHUB_WORKSPACE/.buildozer/android/platform/python-for-android
-
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # Qulqulleessanii bifa haaraan jalqabsiisuu
+        
+        # Buildozer falanqa hojii (workspace) ofii isaa keessatti qulqulluutti akka uumu dirqisiisuu
         buildozer android clean
+        
+        # Kallattiin APK uumuu
         buildozer -v android debug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: OroExam-APK
-        path: bin/*.apk
