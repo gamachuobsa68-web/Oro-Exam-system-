@@ -28,43 +28,26 @@ jobs:
         python -m pip install --upgrade pip
         pip install "Cython<3.0.0" buildozer kivy virtualenv sh
 
-    - name: Setup Private Android SDK & NDK (Anti-Overwrite Fix)
+    - name: Fix Android SDK Structure (Perfect Symlink)
       run: |
-        # 1. Falanqa dhuunfaa qopheessuu
-        export LOCAL_SDK=$HOME/local-android-sdk
-        mkdir -p $LOCAL_SDK/cmdline-tools/latest
+        # GitHub Actions irratti SDK durtii jiru folder local-android-sdk jedhamutti kooppii gochuu
+        mkdir -p $HOME/local-android-sdk
+        cp -r /usr/local/lib/android/sdk/* $HOME/local-android-sdk/
         
-        # 2. Commandline tools stable ta'e gadi fiduu
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
-        unzip -q cmdline.zip
-        mv cmdline-tools/* $LOCAL_SDK/cmdline-tools/latest/
-        rm -rf cmdline-tools cmdline.zip
+        # Buildozer akka inni tools/bin/sdkmanager bifa qulqulluun argatuuf symlink uumuu
+        # Kuni 'lib' fi java dependencies hunda bifa sirriin akka dubbisu taasisa
+        mkdir -p $HOME/local-android-sdk/tools
+        ln -s $HOME/local-android-sdk/cmdline-tools/latest/bin $HOME/local-android-sdk/tools/bin
         
-        # 3. FIX: Folder 'tools/bin' moofaa Buildozer barbaadu guutummatti uumuu
-        mkdir -p $LOCAL_SDK/tools/bin
-        cp $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager $LOCAL_SDK/tools/bin/sdkmanager
-        
-        # 4. Licenses hundumaa heyyamsiisuu
-        mkdir -p $LOCAL_SDK/licenses
-        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK --licenses
-        
-        # 5. Build-tools, platform-tools fi platforms fe'uu
-        yes | $LOCAL_SDK/cmdline-tools/latest/bin/sdkmanager --sdk_root=$LOCAL_SDK "platform-tools" "build-tools;33.0.2" "platforms;android-33"
-        
-        # 6. NDK r25c stable ta'e gadi fiduu
-        mkdir -p $HOME/local-android-ndk
-        wget -q https://dl.google.com/android/repository/android-ndk-r25c-linux.zip -O ndk.zip
-        unzip -q ndk.zip -d $HOME/local-android-ndk/
-        mv $HOME/local-android-ndk/android-ndk-r25c $HOME/local-android-ndk/android-ndk
-        rm ndk.zip
+        # Lisenasii hundumaa fudhachuu
+        mkdir -p $HOME/local-android-sdk/licenses
+        yes | $HOME/local-android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/local-android-sdk --licenses
 
-    - name: Force Build with Buildozer (Clean Env)
+    - name: Build with Buildozer
       run: |
-        # CRITICAL: Environment variables durtii ta'an hundumaa gara meeshaa keenya haaraatti naannessuu
-        # Kuni Buildozer akka inni system SDK moofaa san keessatti hin ulamne ittisa.
-        export ANDROID_HOME=/home/runner/local-android-sdk
-        export ANDROID_SDK_ROOT=/home/runner/local-android-sdk
-        export ANDROID_NDK_HOME=/home/runner/local-android-ndk/android-ndk
+        # Environment variable hunda gara folder keenya haaraatti qindeessuu
+        export ANDROID_HOME=$HOME/local-android-sdk
+        export ANDROID_SDK_ROOT=$HOME/local-android-sdk
         export PATH=$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
         
         buildozer -v android debug
