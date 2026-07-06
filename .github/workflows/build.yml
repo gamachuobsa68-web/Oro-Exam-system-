@@ -1,4 +1,4 @@
-name: Android Build (Kivy APK)
+name: Build Android APK (Kivy)
 
 on:
   push:
@@ -10,28 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
+    - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Set up Python (FIXED)
       uses: actions/setup-python@v5
       with:
-        python-version: 3.10
+        python-version: "3.10"
 
-    - name: Install system dependencies (SDK/NDK tools fix)
+    - name: Install system dependencies
       run: |
         sudo apt update
-        sudo apt install -y git zip unzip openjdk-17-jdk wget curl
-        sudo apt install -y autoconf libtool pkg-config zlib1g-dev
-        sudo apt install -y libncurses5-dev libffi-dev libssl-dev
+        sudo apt install -y git zip unzip openjdk-17-jdk
+        sudo apt install -y autoconf libtool pkg-config
+        sudo apt install -y zlib1g-dev libncurses5-dev libffi-dev libssl-dev
+        sudo apt install -y wget curl
 
-    - name: Accept Android SDK licenses (FIX license error)
+    - name: Accept Android licenses (FIX)
       run: |
         mkdir -p $HOME/.android
         touch $HOME/.android/repositories.cfg
-        yes | sudo apt install -y sdkmanager || true
 
-    - name: Install Python dependencies
+    - name: Install Python tools
       run: |
         python -m pip install --upgrade pip
         pip install cython buildozer
@@ -42,7 +42,7 @@ jobs:
         path: .buildozer
         key: buildozer-${{ runner.os }}
 
-    - name: Initialize Buildozer (first run safe)
+    - name: Initialize Buildozer
       run: |
         buildozer init || true
 
