@@ -20,26 +20,24 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
-        pip3 install --user --upgrade buildozer kivy Cython
+        pip3 install --user --upgrade "Cython<3.0.0" buildozer kivy
 
-    - name: Pre-install Android SDK Tools & Fix Path
+    - name: Pre-clone Python-for-Android (Fix Missing Directory Error)
       run: |
-        # Android SDK fi Build Tools qopheessuu
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
-        unzip -q cmdline.zip
-        mv cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
-        rm -rf cmdline-tools cmdline.zip
-        
-        export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
-        yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "platform-tools" "build-tools;33.0.2" "platforms;android-33"
+        # Falanqa Buildozer uumee dursee koodii p4a internet irraa gadi fida
+        mkdir -p .buildozer/android/platform
+        git clone --depth 1 -b master https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
 
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        
-        # Buildozer falanqa hojii (workspace) ofii isaa keessatti qulqulluutti akka uumu dirqisiisuu
+        # Qulqulleessanii bifa haaraan jalqabsiisuu
         buildozer android clean
-        
-        # Kallattiin APK uumuu
+        # APK uumuu
         buildozer -v android debug
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: OroExam-APK
+        path: bin/*.apk
