@@ -22,27 +22,31 @@ jobs:
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
         pip3 install --user --upgrade "Cython<3.0.0" buildozer kivy
 
-    - name: Force Pre-install Android SDK, NDK r28c & Accept Licenses
+    - name: Force Pre-install Android SDK, NDK r28c & Setup Sdkmanager Path
       run: |
-        # 1. Folder durtii Buildozer qopheessuu
+        # 1. Folder durtii SDK ijaaruu
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
         
-        # 2. Command Line Tools gadi fiduu
+        # 2. Commandline tools gadi fiduu
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
         unzip -q cmdline.zip
         mv cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
         rm -rf cmdline-tools cmdline.zip
         
+        # 3. FIX: Buildozer falanqa 'android-sdk/tools/bin/sdkmanager' jedhu waan barbaaduuf symlink uumuu
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/tools
+        ln -s $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin $HOME/.buildozer/android/platform/android-sdk/tools/bin
+        
         export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
         
-        # 3. Dirqamaan licenses Google hunda 'yes' jechuu (Fixes license skipping)
+        # 4. Licenses hunda heyyamuu
         mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
         yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk --licenses
         
-        # 4. Build-Tools 37 fi SDK 33 durstinee fe'uu
+        # 5. Meeshaalee barbaachisoo ta'an durstinee fe'uu
         yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "platform-tools" "build-tools;37.0.0" "platforms;android-33"
         
-        # 5. Android NDK r28c kallattiin fe'uu fi falanqa isaa tolchuu
+        # 6. Android NDK r28c gadi fiduu
         mkdir -p $HOME/.buildozer/android/platform
         wget -q https://dl.google.com/android/repository/android-ndk-r28c-linux.zip -O ndk.zip
         unzip -q ndk.zip -d $HOME/.buildozer/android/platform/
@@ -57,7 +61,6 @@ jobs:
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # APK gufannoo malee ijaaruu jalqaba
         buildozer -v android debug
 
     - name: Upload APK
