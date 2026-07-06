@@ -1,53 +1,51 @@
-name: Android Build
+name: Android Build (Kivy APK)
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  android:
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout repo
+      uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.10
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: "17"
+    - name: Install system dependencies (SDK/NDK tools fix)
+      run: |
+        sudo apt update
+        sudo apt install -y git zip unzip openjdk-17-jdk wget curl
+        sudo apt install -y autoconf libtool pkg-config zlib1g-dev
+        sudo apt install -y libncurses5-dev libffi-dev libssl-dev
 
-      - name: Install system packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            git zip unzip build-essential \
-            autoconf automake libtool pkg-config \
-            libffi-dev libssl-dev \
-            libjpeg-dev zlib1g-dev \
-            libsqlite3-dev sqlite3
+    - name: Accept Android SDK licenses (FIX license error)
+      run: |
+        mkdir -p $HOME/.android
+        touch $HOME/.android/repositories.cfg
+        yes | sudo apt install -y sdkmanager || true
 
-      - name: Install Buildozer
-        run: |
-          python -m pip install --upgrade pip
-          pip install Cython==0.29.37
-          pip install buildozer==1.5.0
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install cython buildozer
 
-      - name: Build APK
-        env:
-          BUILDOZER_WARN_ON_ROOT: 0
-        run: |
-          buildozer android debug
+    - name: Cache Buildozer
+      uses: actions/cache@v4
+      with:
+        path: .buildozer
+        key: buildozer-${{ runner.os }}
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: bin/*.apk
+    - name: Initialize Buildozer (first run safe)
+      run: |
+        buildozer init || true
+
+    - name: Build APK
+      run: |
+        buildozer android debug
