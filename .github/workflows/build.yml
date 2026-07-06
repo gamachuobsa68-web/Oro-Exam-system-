@@ -22,16 +22,34 @@ jobs:
         sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake python3-pip python3-setuptools
         pip3 install --user --upgrade "Cython<3.0.0" buildozer kivy
 
+    - name: Force Pre-install Android SDK & Accept License 37 (CRITICAL FIX)
+      run: |
+        # Folder SDK Buildozer uumuu
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdline.zip
+        unzip -q cmdline.zip
+        mv cmdline-tools/* $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
+        rm -rf cmdline-tools cmdline.zip
+        
+        # Karaa (Path) qopheessuu
+        export PATH=$PATH:$HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin
+        
+        # Dirqamaan license hunda (kan Build-Tools 37 dabalatee) 'yes' jechuu
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/licenses
+        yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk --licenses
+        
+        # Build-tools 37 fi 33 lachuu durstinee fe'uu
+        yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/.buildozer/android/platform/android-sdk "platform-tools" "build-tools;37.0.0" "build-tools;33.0.2" "platforms;android-33"
+
     - name: Force Create Python-for-Android Directory
       run: |
-        # Folder Buildozer barbaadu durstinee ijaarree p4a keessa kaayna
         mkdir -p .buildozer/android/platform
         git clone --depth 1 -b master https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
 
     - name: Build with Buildozer
       run: |
         export PATH=$PATH:$HOME/.local/bin
-        # AJAAJA CLEAN SAN BALLEESSINEERRA - KALLATTIIN APK UUUMNA
+        # APK uumuu jalqaba
         buildozer -v android debug
 
     - name: Upload APK
