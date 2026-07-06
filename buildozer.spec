@@ -18,9 +18,9 @@ android.api = 33
 android.minapi = 21
 android.build_tools_version = 33.0.2
 
-# KALLATTIIN PATH SDK FI NDK GITHUB ACTIONS IRRATTI JIRU ITTI AGARSIISUU
-android.sdk_path = /usr/local/lib/android/sdk
-android.ndk_path = /usr/local/lib/android/sdk/ndk/27.3.13750724
+# LOCAL PATH FAlanqa DHUUNFAA KEENYA ITTI AGARSIISUU (Root Permission kan hin gaafanne)
+android.sdk_path = /home/runner/local-android-sdk
+android.ndk_path = /home/runner/local-android-ndk/android-ndk
 
 p4a.dir = .buildozer/android/platform/python-for-android
 android.accept_licenses = True
