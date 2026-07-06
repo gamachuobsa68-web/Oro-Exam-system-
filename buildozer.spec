@@ -1,30 +1,27 @@
 [app]
 title = Oro Exam System
 package.name = oroexam
-package.domain = org.gamachuobsa
+package.domain = org.example
 
 source.dir = .
-source.include_exts = py,png,jpg,jpeg,kv,json,txt,db,ttf
+source.include_exts = py,kv,png,jpg,atlas
 
-version = 1.0.0
+version = 1.0
 
-requirements = python3,kivy==2.3.0,pillow,requests,urllib3,certifi,reportlab
+requirements = python3,kivy,cython
 
 orientation = portrait
-fullscreen = 0
 
-android.api = 34
-android.minapi = 24
-android.ndk = 27b
-android.archs = arm64-v8a
+android.api = 33
+android.minapi = 21
+android.ndk = 25b
 
-android.accept_sdk_license = True
-p4a.bootstrap = sdl2
+android.archs = arm64-v8a, armeabi-v7a
 
+# important fix
+android.allow_backup = True
 log_level = 2
-warn_on_root = 0
-
+warn_on_root = 1
 
 [buildozer]
 log_level = 2
-warn_on_root = 0
