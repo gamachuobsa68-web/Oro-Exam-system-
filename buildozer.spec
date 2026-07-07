@@ -12,7 +12,9 @@ version = 1.0
 requirements = python3,kivy
 
 orientation = portrait
-
+git rm -r --cached .buildozer
+git commit -m "Remove buildozer cache"
+git push
 fullscreen = 0
 
 # Android
