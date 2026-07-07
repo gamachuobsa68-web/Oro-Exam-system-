@@ -97,3 +97,6 @@ jobs:
         path: bin/*.apk
         rm -rf .buildozer
 rm -rf bin
+git add .
+git commit -m "Fix build requirements"
+git push
