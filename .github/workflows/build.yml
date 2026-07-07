@@ -72,3 +72,6 @@ jobs:
     buildozer android clean || true
     rm -rf .buildozer
     rm -rf bin
+- name: Build APK
+  run: |
+    buildozer android debug
