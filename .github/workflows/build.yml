@@ -1,59 +1,82 @@
 name: Build APK
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+      - name: Install Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
-    - name: Install Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential git zip unzip zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf automake libtool pkg-config cmake
-        python -m pip install --upgrade pip
-        pip install "Cython<3.0.0" buildozer kivy virtualenv sh
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
 
-    - name: Fix Android SDK Structure (Perfect Symlink)
-      run: |
-        # GitHub Actions irratti SDK durtii jiru folder local-android-sdk jedhamutti kooppii gochuu
-        mkdir -p $HOME/local-android-sdk
-        cp -r /usr/local/lib/android/sdk/* $HOME/local-android-sdk/
-        
-        # Buildozer akka inni tools/bin/sdkmanager bifa qulqulluun argatuuf symlink uumuu
-        # Kuni 'lib' fi java dependencies hunda bifa sirriin akka dubbisu taasisa
-        mkdir -p $HOME/local-android-sdk/tools
-        ln -s $HOME/local-android-sdk/cmdline-tools/latest/bin $HOME/local-android-sdk/tools/bin
-        
-        # Lisenasii hundumaa fudhachuu
-        mkdir -p $HOME/local-android-sdk/licenses
-        yes | $HOME/local-android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$HOME/local-android-sdk --licenses
+      - name: Install SDK Packages
+        run: |
+          yes | sdkmanager --licenses
 
-    - name: Build with Buildozer
-      run: |
-        # Environment variable hunda gara folder keenya haaraatti qindeessuu
-        export ANDROID_HOME=$HOME/local-android-sdk
-        export ANDROID_SDK_ROOT=$HOME/local-android-sdk
-        export PATH=$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
-        
-        buildozer -v android debug
+          sdkmanager \
+            "platform-tools" \
+            "platforms;android-34" \
+            "build-tools;34.0.0"
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: OroExam-APK
-        path: bin/*.apk
+      - name: Install Linux dependencies
+        run: |
+          sudo apt-get update
+
+          sudo apt-get install -y \
+            zip unzip \
+            git \
+            openjdk-17-jdk \
+            autoconf \
+            automake \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo5 \
+            cmake \
+            ninja-build \
+            ccache \
+            libffi-dev \
+            libssl-dev \
+            python3-pip
+
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install Cython==0.29.37
+          pip install buildozer
+          pip install python-for-android
+
+      - name: Build APK
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_SDK_ROOT }}
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_SDK_ROOT }}
+        run: |
+          buildozer android debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: |
+            bin/*.apk
