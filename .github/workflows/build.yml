@@ -67,3 +67,8 @@ jobs:
         with:
           name: app-debug
           path: bin/*.apk
+- name: Clean Buildozer
+  run: |
+    buildozer android clean || true
+    rm -rf .buildozer
+    rm -rf bin
