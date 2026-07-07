@@ -1,30 +1,57 @@
 [app]
 
 title = Oro Exam System
-package.name = oroexamsystem
-package.domain = org.oroexam
+package.name = oroexam
+package.domain = org.gamachuobsa
+
 source.dir = .
-source.include_exts = py,png,jpg,kv,db
-requirements = python3,kivy==2.3.0,sqlite3
-version = 1.0.0
+source.include_exts = py,png,jpg,jpeg,kv,atlas,json,txt
+
+version = 1.0
+
+requirements = python3,kivy
+
 orientation = portrait
-fullscreen = 1
 
-# ==============================================================================
-# Android specific configuration
-# ==============================================================================
+fullscreen = 0
 
-android.api = 33
+# Android
+android.api = 34
 android.minapi = 21
-android.build_tools_version = 33.0.2
+android.ndk = 25b
+android.archs = arm64-v8a, armeabi-v7a
 
-# Path sirrii symlink itti uumne kanaan gadii agarsiisuu
-android.sdk_path = /home/runner/local-android-sdk
+# Leave empty so Buildozer downloads/uses the SDK automatically.
+android.sdk_path =
+android.ndk_path =
 
-android.accept_licenses = True
-android.archs = armeabi-v7a, arm64-v8a
-android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
+android.permissions = INTERNET
 
-[buildozer]
+android.allow_backup = True
+
+android.accept_sdk_license = True
+
+# Build tools
+android.build_tools_version = 34.0.0
+
+# Logging
 log_level = 2
 warn_on_root = 1
+
+# Package formats
+# android.release_artifact = apk
+
+# Presplash/icon (uncomment if you have them)
+# presplash.filename = assets/presplash.png
+# icon.filename = assets/icon.png
+
+# Services
+# services =
+
+# Python-for-Android
+p4a.branch = develop
+
+[buildozer]
+
+bin_dir = ./bin
+build_dir = ./.buildozer
