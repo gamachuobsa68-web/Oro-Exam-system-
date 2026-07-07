@@ -15,15 +15,18 @@ source.include_exts = py,png,jpg,jpeg,kv,json,txt
 version = 1.0
 
 
-requirements = python3,kivy==2.2.1,requests
+# IMPORTANT:
+# Do not add pyjnius or android here.
+requirements = python3,kivy==2.3.0,requests
 
 
 orientation = portrait
 
+
 fullscreen = 0
 
 
-# Android
+# Android configuration
 
 android.api = 34
 
@@ -40,17 +43,17 @@ android.archs = arm64-v8a,armeabi-v7a
 android.permissions = INTERNET
 
 
-# Kivy bootstrap
+# Kivy Android bootstrap
 
 p4a.bootstrap = sdl2
 
 
-# Build settings
+# Accept SDK license
 
 android.accept_sdk_license = True
 
 
-# Debug
+# Debug information
 
 log_level = 2
 
