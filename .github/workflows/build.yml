@@ -95,3 +95,5 @@ jobs:
       with:
         name: Oro-Exam-System-APK
         path: bin/*.apk
+        rm -rf .buildozer
+rm -rf bin
