@@ -1,2 +1,5 @@
 rm -rf .buildozer
 rm -rf bin
+git add .
+git commit -m "Fix Buildozer Android build"
+git push
